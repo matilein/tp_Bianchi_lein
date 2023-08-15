@@ -6,20 +6,20 @@ import Quality
 data Link = Lin City City Quality deriving (Eq, Show)
 
 newL :: City -> City -> Quality -> Link -- genera un link entre dos ciudades distintas
-newL x y z = (Lin x y z)
+newL city1 city2 quality = (Lin city1 city2 quality)
 
 connectsL :: City -> Link -> Bool   -- indica si esta ciudad es parte de este link
-connectsL x (Lin y z w) | x== y = True
-                        | x==z = True
+connectsL cityTarget (Lin city1 city2 _) | cityTarget==city1 = True
+                        | cityTarget==city2 = True
                         | otherwise = False
 
 linksL :: City -> City -> Link -> Bool -- indica si estas dos ciudades distintas estan conectadas mediante este link
-linksL x y (Lin a b c)  | x==a && y==b = True
-                        | x==b && y==a = True
+linksL cityTarget1 cityTarget2 (Lin city1 city2 _)  | cityTarget1==city1 && cityTarget2==city2 = True
+                        | cityTarget1==city2 && cityTarget2==city1 = True
                         | otherwise = False
 
 capacityL :: Link -> Int
-capacityL (Lin x y z) = capacityL(z)
+capacityL (Lin _ _ quality) = capacityQ(quality)
 
 delayL :: Link -> Float     -- la demora que sufre una conexion en este canal
-delayL (Lin x y z) = delayL(z)
+delayL (Lin _ _ quality) = delayQ(quality)
