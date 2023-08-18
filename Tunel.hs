@@ -1,36 +1,27 @@
 module Tunel ( Tunel, newT, connectsT, usesT )
-   where
-import Link
+   where 
+
+import Link (Link(..))
 import Point
-import Quality
+import Quality (Quality(..))
 import City
 
 data Tunel = Tun [Link] deriving (Eq, Show)
 
 newT :: [Link] -> Tunel
-newT thelinks = Tun thelinks
-connectsT :: City -> City -> Tunel -> Bool -- inidca si este tunel conceta estas dos ciudades distintas
-connectsT city1 city2 (Tun thelinks) = any (\link -> (city1 `connectsL` link) && (city2 `connectsL` link)) thelinks
+newT links = Tun links
+
+connectsT :: City -> City -> Tunel -> Bool -- indica si este tunel conceta estas dos ciudades distintas
+connectsT city1 city2 (Tun links) | any (connects links city1 city2) = True
+                                  | otherwise = False
+connects :: Link -> City -> City -> Bool
+connects (Lin cityone citytwo _) = city1 == cityone && city2 == citytwo || city2 == cityone && city1 == citytwo
+
+
 usesT :: Link -> Tunel -> Bool  -- indica si este tunel atraviesa ese link
 usesT link (Tun thelinks) = link `elem` thelinks
--------------------------
-{-x1= newP 1 (-1)
-x2= newP 1 1
-bsas= newC "bsas" x1
-rio= newC "rio" x2
-calidad = newQ "calidad" 2 1.0
-link = newL bsas rio calidad
 
-x3= newP 1 (-1)
-x4= newP 1 1
-sas= newC "sas" x2
-io= newC "io" x3
-calida = newQ "calida" 2 1.0
-lin = newL sas io calida
-
-x5= newP 1 (-1)
-x6= newP 1 1
-as= newC "as" x5
-o= newC "o" x6
-calid = newQ "calid" 2 1.0
-li = newL as o calid-}
+delayT :: Tunel -> Float -- la demora que sufre una conexion en este tunel
+delayT tunel = sum $ map demora tunel
+demora :: Link -> Float
+demora (Lin _ _ (Qua _ _ demora)) = demora
