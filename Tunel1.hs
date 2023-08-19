@@ -1,4 +1,4 @@
-module Tunel ( Tunel, newT, connectsT, usesT )
+module Tunel ( Tunel, newT, connectsT, usesT, delayT )
    where
 import Link
 import Point
@@ -13,7 +13,11 @@ newT thelinks = Tun thelinks
 
 connectsT :: City -> City -> Tunel -> Bool -- inidca si este tunel conceta estas dos ciudades distintas
 connectsT city1 city2 (Tun [link]) = connectsL city1 link && connectsL city2 link -- contiene un enlace solo 
-connectsT city1 city2 (Tun (first:rest)) = connectsL city1 first && connectsL city2 (last rest) 
+connectsT city1 city2 (Tun (first:rest)) = connectsL city1 first && connectsL city2 (last rest)
+delayT :: Tunel -> Float -- la demora que sufre una conexion en este tunel
+delayT (Tun thelinks) =
+    let delays = map delayL thelinks    
+    in sum delays 
 usesT :: Link -> Tunel -> Bool  -- indica si este tunel atraviesa ese link
 usesT link (Tun thelinks) = link `elem` thelinks
 ----------------- Variables para probarlo 
