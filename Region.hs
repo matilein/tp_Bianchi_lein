@@ -9,8 +9,8 @@ import qualified Data.Type.Bool as True
 
 data Region = Reg [City] [Link] [Tunel]
 
-newR :: [City] -> [Link] -> [Tunel] -> Region
-newR cities links tunels = Reg cities links tunels
+newR :: Region
+newR = Reg [] [] []
 
 foundR :: Region -> City -> Region -- agrega una nueva ciudad a la región
 foundR (Reg cities links tunels) newCity = Reg (newCity:cities) links tunels
@@ -28,3 +28,23 @@ connectedR (Reg cities links tunels) city1 city2 = --hay que iterar sobre tunels
 linkedR :: Region -> City -> City -> Bool -- indica si estas dos ciudades estan enlazadas
 delayR :: Region -> City -> City -> Float -- dadas dos ciudades conectadas, indica la demora
 availableCapacityForR :: Region -> City -> City -> Int -- indica la capacidad disponible entre dos ciudades
+
+--x1= newP 1 (-1)
+--bsas= newC "bsas" x1
+--rio= newC "rio" x1
+--calidad = newQ "calidad" 2 2
+--rosario= newC "rosario" x1
+--santafe= newC "santafe" x1
+--pilar = newC "pilar" x1
+
+--link1 = newL bsas rio calidad
+--link2 = newL rio rosario calidad
+--link3 = newL rosario santafe calidad
+--link4 = newL santafe pilar calidad
+
+--tunelito = [link1, link2, link3, link4]
+
+--regionsita = newR
+--regionsita = foundR regionsita bsas
+--regionsita = foundR regionsita rio
+--regionsita = linkR regionsita bsas rio calidad
