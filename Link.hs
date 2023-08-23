@@ -20,7 +20,7 @@ linksL cityTarget1 cityTarget2 (Lin city1 city2 _)  | cityTarget1==city1 && city
                         | otherwise = False
 
 capacityL :: Link -> Int
-capacityL (Lin _ _ quality) = capacityQ(quality)
+capacityL (Lin _ _ quality) = capacityQ quality
 
 delayL :: Link -> Float     -- la demora que sufre una conexión en este canal
-delayL (Lin city1 city2 quality) = delayQ(quality) * (distanceC city1 city2)
+delayL (Lin city1 city2 quality) = delayQ quality * distanceC city1 city2
