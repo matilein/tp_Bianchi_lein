@@ -24,15 +24,19 @@ linkR (Reg cities links tunels) city1 city2 calidad | city1 `notElem` cities = e
 tunelR :: Region -> [ City ] -> Region -- genera una comunicación entre dos ciudades distintas de la región, le pasas una region y una lista de ciudades, hay que fijarse de que esas ciudades esten enlazadas por links y devuele no el tunel que cree sino una region con ese tunel.
 
 
-connectedR :: Region -> City -> City -> Bool -- indica si estas dos ciudades estan conectadas por un tunel
-connectedR (Reg cities links tunels) city1 city2 = --hay que iterar sobre tunels y ver con connectsT si esas dos ciudades esta en alg tunel
+connectedR :: Region -> City -> City -> Bool 
+connectedR (Reg _ _ tunnels) citi1 citi2 = any (\tunnel -> connectsT citi2 citi1 tunnel) tunnels
 
-linkedR :: Region -> City -> City -> Bool -- indica si estas dos ciudades estan enlazadas
+linkedR :: Region -> City -> City -> Bool --indica si estas dos ciudades estan enlazadas
+linkedR (Reg _ links _) citi1 citi2 = any (\link -> linksL citi2 citi1 link) links
 
 delayR :: Region -> City -> City -> Float -- dadas dos ciudades conectadas, indica la demora
 
 availableCapacityForR :: Region -> City -> City -> Int -- indica la capacidad disponible entre dos ciudades
 
+
+auxiliar1 :: Region -> [City] -> Bool
+auxiliar1 (Reg cities _ _) citiesN = all (\ciudad -> ciudad `elem` cities) citiesN
 --x1= newP 1 (-1)
 --bsas= newC "bsas" x1
 --rio= newC "rio" x1
