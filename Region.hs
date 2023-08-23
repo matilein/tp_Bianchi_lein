@@ -21,8 +21,8 @@ linkR (Reg cities links tunels) city1 city2 calidad | city1 `notElem` cities = e
                                                    | city2 `notElem` cities = error"La segunda ciudad ingresada no pertenece a la región"
                                                    | otherwise = Reg cities ((newL city1 city2 calidad):links) tunels
 
-tunelR :: Region -> [ City ] -> Region -- genera una comunicación entre dos ciudades distintas de la región
---No entendi
+tunelR :: Region -> [ City ] -> Region -- genera una comunicación entre dos ciudades distintas de la región, le pasas una region y una lista de ciudades, hay que fijarse de que esas ciudades esten enlazadas por links y devuele no el tunel que cree sino una region con ese tunel.
+
 
 connectedR :: Region -> City -> City -> Bool -- indica si estas dos ciudades estan conectadas por un tunel
 connectedR (Reg cities links tunels) city1 city2 = --hay que iterar sobre tunels y ver con connectsT si esas dos ciudades esta en alg tunel
