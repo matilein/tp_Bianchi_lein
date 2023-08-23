@@ -1,4 +1,4 @@
-module Region ( Region, newR, foundR, linkR, tunelR, pathR, linksForR, connectedR, linkedR, delayR, availableCapacityForR, usedCapacityForR )
+module Region ( Region, newR, foundR, linkR, tunelR, pathR, linksForR, connectedR, linkedR, delayR, availableCapacityForR, usedCapacityForR, getLink )
    where
 import Link
 import Point
@@ -31,7 +31,8 @@ linkedR :: Region -> City -> City -> Bool --indica si estas dos ciudades estan e
 linkedR (Reg _ links _) citi1 citi2 = any (\link -> linksL citi2 citi1 link) links
 
 delayR :: Region -> City -> City -> Float -- dadas dos ciudades conectadas, indica la demora
-
+getLink :: [Link] -> City -> City -> [Link]
+getLink links citi1 citi2 = [link | link <- links, linksL citi1 citi2 link ]
 availableCapacityForR :: Region -> City -> City -> Int -- indica la capacidad disponible entre dos ciudades
 
 
