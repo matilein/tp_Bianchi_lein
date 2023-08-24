@@ -6,6 +6,7 @@ import Quality
 import City
 import Tunel
 import qualified Data.Type.Bool as True
+import GHC.Exts.Heap (GenClosure(link))
 
 data Region = Reg [City] [Link] [Tunel] deriving (Show)
 
@@ -25,29 +26,49 @@ tunelR :: Region -> [ City ] -> Region -- genera una comunicación entre dos ciu
 tunelR (Reg cities links tunels) citiesN | not(cityCheck (Reg cities links tunels) citiesN) = error"Se ingresaron ciudades que no pertenecen a la región"
                                          | length citiesN<=1 = error"Las ciudades ingresadas no son suficientes para crear un túnel (2 o más)"
                                          | any(\tunel -> connectsT (head citiesN) (last citiesN) tunel)tunels = error"Este tunel ya pertenece a la región"
-                                         | otherwise = Reg cities links (newT(findLink (Reg cities links tunels) [] citiesN):tunels)
+                                         | otherwise = Reg cities links (newT(constructTunel (Reg cities links tunels) [] citiesN):tunels)
+                                         --Chequea cuando agrega un link que tenga capacidad
 cityCheck :: Region -> [City] -> Bool
 cityCheck (Reg cities _ _) citiesN = all (\ciudad -> ciudad `elem` cities) citiesN
-findLink :: Region -> [Link]-> [City] -> [Link]
-findLink _ _ [x] = []
-findLink (Reg _ [] _) _ _ = error"Las ciudades no contienen links que las enlazan"
-findLink (Reg cities (y:ys) tunels) links (x:xs)| not(linksL x (head xs) y) = findLink (Reg cities ys tunels) (y:links) (x:xs)
-                                                | otherwise = [y] ++ findLink (Reg cities (y:links++ys) tunels) [] xs
+constructTunel :: Region -> [Link] -> [City] -> [Link]
+constructTunel _ _ [x] = []
+constructTunel (Reg _ [] _) _ _ = error"Las ciudades no contienen links que las enlazan"
+constructTunel (Reg cities (y:ys) tunels) links (x:xs)| not(linksL x (head xs) y) = constructTunel (Reg cities ys tunels) (y:links) (x:xs)
+                                                | otherwise = [y] ++ constructTunel (Reg cities (y:links++ys) tunels) [] xs
+findLink :: Region -> City -> City -> Link
+findLink (Reg _ [] _) _ _ = error"Las ciudades no estan enlazadas por un link"
+findLink (Reg cities (x:xs) tunels) city1 city2 | linksL city1 city2 x = x
+                                                | otherwise = findLink (Reg cities xs tunels) city1 city2
+
 
 connectedR :: Region -> City -> City -> Bool 
-connectedR (Reg _ _ tunnels) citi1 citi2 = any (\tunnel -> connectsT citi2 citi1 tunnel) tunnels
+connectedR (Reg _ _ tunnels) city1 city2 = any (\tunnel -> connectsT city2 city1 tunnel) tunnels
 
 linkedR :: Region -> City -> City -> Bool --indica si estas dos ciudades estan enlazadas
-linkedR (Reg _ links _) citi1 citi2 = any (\link -> linksL citi2 citi1 link) links
+linkedR (Reg _ links _) city1 city2 = any (\link -> linksL city2 city1 link) links
 
 delayR :: Region -> City -> City -> Float -- dadas dos ciudades conectadas, indica la demora
---Hay decisiones que tomar! }
+--Hay decisiones que tomar! 
+delayR region city1 city2 | not(cityCheck region [city1,city2]) = error"Se ingresaron ciudades que no pertenecen a la región"
+                          | otherwise = delayT(findTunel region city1 city2)
+findTunel :: Region -> City -> City -> Tunel
+findTunel (Reg _ _ []) _ _ = error"Las ciudades no estan conectadas"
+findTunel (Reg cities links (x:xs)) city1 city2 | connectsT city1 city2 x = x
+                                                | otherwise = findTunel (Reg cities links xs) city1 city2
 
 availableCapacityForR :: Region -> City -> City -> Int -- indica la capacidad disponible entre dos ciudades
---Teniendo en cuenta la capacidad que los túneles existentes ocupan }
+availableCapacityForR region city1 city2 = capacityL link - usedCapacity region link
+   where link= findLink region city1 city2
 
---La conexión sólo se da a través de un túnel, y sólo se conectan los extremos }
---Cada vez que se refiere a 'conectadas', necesariamente se refiere a un túnel }
+usedCapacity :: Region -> Link -> Int
+usedCapacity (Reg _ _ tunels) link = foldr(\tunel acc -> if usesT link tunel then acc+1 else acc) 0 tunels
+
+--Teniendo en cuenta la capacidad que los túneles existentes ocupan 
+
+--Funcion que te da la capacidad de un link (-1 cada vez que esta en un tunel)
+
+--La conexión sólo se da a través de un túnel, y sólo se conectan los extremos 
+--Cada vez que se refiere a 'conectadas', necesariamente se refiere a un túnel 
 
 
 --x1= newP 1 (-1)
@@ -56,10 +77,11 @@ availableCapacityForR :: Region -> City -> City -> Int -- indica la capacidad di
 --x4=newP (-3) 5
 --bsas= newC "bsas" x1
 --rio= newC "rio" x3
---calidad = newQ "calidad" 2 2
+--calidad = newQ "calidad" 5 3
 --rosario= newC "rosario" x2
 --santafe= newC "santafe" x4
 --pilar = newC "pilar" x3
+--japon = newC "japon" x2
 
 --link1 = newL bsas rio calidad
 --link2 = newL rio rosario calidad
