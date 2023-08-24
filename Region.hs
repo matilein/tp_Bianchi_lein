@@ -26,20 +26,18 @@ tunelR :: Region -> [ City ] -> Region -- genera una comunicación entre dos ciu
 tunelR (Reg cities links tunels) citiesN | not(cityCheck (Reg cities links tunels) citiesN) = error"Se ingresaron ciudades que no pertenecen a la región"
                                          | length citiesN<=1 = error"Las ciudades ingresadas no son suficientes para crear un túnel (2 o más)"
                                          | any(\tunel -> connectsT (head citiesN) (last citiesN) tunel)tunels = error"Este tunel ya pertenece a la región"
-                                         | otherwise = Reg cities links (newT(constructTunel (Reg cities links tunels) [] citiesN):tunels)
+                                         | otherwise = Reg cities links (newT(constructTunel (Reg cities links tunels) citiesN):tunels)
                                          --Chequea cuando agrega un link que tenga capacidad
 cityCheck :: Region -> [City] -> Bool
 cityCheck (Reg cities _ _) citiesN = all (\ciudad -> ciudad `elem` cities) citiesN
-constructTunel :: Region -> [Link] -> [City] -> [Link]
-constructTunel _ _ [x] = []
-constructTunel (Reg _ [] _) _ _ = error"Las ciudades no contienen links que las enlazan"
-constructTunel (Reg cities (y:ys) tunels) links (x:xs)| not(linksL x (head xs) y) = constructTunel (Reg cities ys tunels) (y:links) (x:xs)
-                                                | otherwise = [y] ++ constructTunel (Reg cities (y:links++ys) tunels) [] xs
+constructTunel :: Region -> [City] -> [Link]
+constructTunel _ [x] = []
+constructTunel region (x:xs)| availableCapacityForR region x (head(xs)) <=0 = error"A los enlaces/links no les queda capacidad"
+                            | otherwise = findLink region x (head(xs)) : constructTunel region xs
 findLink :: Region -> City -> City -> Link
 findLink (Reg _ [] _) _ _ = error"Las ciudades no estan enlazadas por un link"
 findLink (Reg cities (x:xs) tunels) city1 city2 | linksL city1 city2 x = x
                                                 | otherwise = findLink (Reg cities xs tunels) city1 city2
-
 
 connectedR :: Region -> City -> City -> Bool 
 connectedR (Reg _ _ tunnels) city1 city2 = any (\tunnel -> connectsT city2 city1 tunnel) tunnels
@@ -71,34 +69,38 @@ usedCapacity (Reg _ _ tunels) link = foldr(\tunel acc -> if usesT link tunel the
 --Cada vez que se refiere a 'conectadas', necesariamente se refiere a un túnel 
 
 
---x1= newP 1 (-1)
---x2=newP 3 5
---x3= newP 2 9
---x4=newP (-3) 5
---bsas= newC "bsas" x1
---rio= newC "rio" x3
---calidad = newQ "calidad" 5 3
---rosario= newC "rosario" x2
---santafe= newC "santafe" x4
---pilar = newC "pilar" x3
---japon = newC "japon" x2
+{-
+x1 = newP 1 (-1)
+x2 = newP 3 5
+x3 = newP 2 9
+x4 = newP (-3) 5
+bsas = newC "bsas" x1
+rio = newC "rio" x3
+calidad = newQ "calidad" 2 3
+rosario = newC "rosario" x2
+santafe = newC "santafe" x4
+pilar = newC "pilar" x3
+japon = newC "japon" x2
 
---link1 = newL bsas rio calidad
---link2 = newL rio rosario calidad
---link3 = newL rosario santafe calidad
---link4 = newL santafe pilar calidad
+link1 = newL bsas rio calidad
+link2 = newL rio rosario calidad
+link3 = newL rosario santafe calidad
+link4 = newL santafe pilar calidad
 
---tunelito = newT [link1, link2, link3, link4]
+tunelito = newT [link1, link2, link3, link4]
 
---regionsita = newR
---region4=foundR regionsita bsas 
---region3=foundR region4 rio 
---region2=foundR region3 rosario 
---region1=foundR region2 santafe 
---region=foundR region1 pilar
+regionsita = newR
+region4 = foundR regionsita bsas 
+region3 = foundR region4 rio 
+region2 = foundR region3 rosario 
+region1 = foundR region2 santafe 
+region = foundR region1 pilar
 
---region5 = linkR region bsas rio calidad
---region6 = linkR region5 rio rosario calidad
---region7 = linkR region6 rosario santafe calidad
---region8 = linkR region7 santafe pilar calidad
---region9= tunelR region8 [bsas,rio,rosario,santafe,pilar]
+region5 = linkR region bsas rio calidad
+region6 = linkR region5 rio rosario calidad
+region7 = linkR region6 rosario santafe calidad
+region8 = linkR region7 santafe pilar calidad
+region9 = tunelR region8 [bsas, rio, rosario, santafe, pilar]
+regions = tunelR region9 [bsas, rio, rosario, santafe]
+regiona = tunelR regions [bsas, rio, rosario]
+-}
