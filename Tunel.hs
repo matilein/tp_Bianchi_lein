@@ -17,9 +17,8 @@ connectsT cityTarget1 cityTarget2 (Tun links) = order cityTarget1 cityTarget2 li
    where 
       order c1 c2 links = connectsL c1 (head links) && not(connectsL c1 (links!!1)) && connectsL c2 (last links) && not(connectsL c2 (links !! (length links -2))) 
 
-
 delayT :: Tunel -> Float -- la demora que sufre una conexion en este tunel
-delayT (Tun linkList) = foldr(\linkList acc -> delayL linkList + acc) 0 linkList
+delayT (Tun linkList) = foldr(\link acc -> delayL link + acc) 0 linkList
 
 usesT :: Link -> Tunel -> Bool  -- indica si este tunel atraviesa ese link
 usesT linkTarget (Tun linkList) = linkTarget `elem` linkList
