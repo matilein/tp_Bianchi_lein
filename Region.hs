@@ -5,8 +5,6 @@ import Point
 import Quality
 import City
 import Tunel
-import qualified Data.Type.Bool as True
-import GHC.Exts.Heap (GenClosure(link))
 
 data Region = Reg [City] [Link] [Tunel] deriving (Show)
 
