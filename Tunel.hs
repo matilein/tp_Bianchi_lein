@@ -4,7 +4,6 @@ import Link
 import Point
 import Quality
 import City
-import qualified Data.Type.Bool as True
 
 data Tunel = Tun [Link] deriving (Eq, Show)
 
