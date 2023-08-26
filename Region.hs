@@ -18,14 +18,14 @@ foundR (Reg cities links tunels) newCity | newCity `elem` cities = error"Esta ci
 
 linkR :: Region -> City -> City -> Quality -> Region -- enlaza dos ciudades de la región con un enlace de la calidad indicada
 linkR (Reg cities links tunels) city1 city2 calidad | city1 `notElem` cities = error"La primer ciudad ingresada no pertenece a la región"
-                                                   | city2 `notElem` cities = error"La segunda ciudad ingresada no pertenece a la región"
-                                                   | otherwise = Reg cities ((newL city1 city2 calidad):links) tunels
+                                                    | city2 `notElem` cities = error"La segunda ciudad ingresada no pertenece a la región"
+                                                    | otherwise = Reg cities ((newL city1 city2 calidad):links) tunels
 
 
 tunelR :: Region -> [ City ] -> Region
 tunelR (Reg cities links tunels) citiesN | not(cityCheck (Reg cities links tunels) citiesN) = error"Se ingresaron ciudades que no pertenecen a la región"
-                                         | length citiesN<=1 = error"Las ciudades ingresadas no son suficientes para crear un túnel (2 o más)"
-                                         | any(\tunel -> connectsT (head citiesN) (last citiesN) tunel)tunels = error"Este tunel ya pertenece a la región"
+                                         | length citiesN<=1 = error"Las ciudades ingresadas no son suficientes para crear un túnel (se requieren 2 o más)"
+                                         | any(\tunel -> connectsT (head citiesN) (last citiesN) tunel)tunels = error"Un tunel que conecta estas dos ciudades ya pertenece a la región"
                                          | otherwise = Reg cities links (newT(constructTunel (Reg cities links tunels) citiesN):tunels)
 
 --Función auxiliar: Verifica que las ciudades ingresadas pertenezcan a la región proporcionada.
