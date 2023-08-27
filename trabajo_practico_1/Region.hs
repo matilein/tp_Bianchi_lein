@@ -17,20 +17,19 @@ foundR (Reg cities links tunels) newCity | newCity `elem` cities = error"Esta ci
 
 
 linkR :: Region -> City -> City -> Quality -> Region -- enlaza dos ciudades de la región con un enlace de la calidad indicada
-linkR (Reg cities links tunels) city1 city2 calidad | city1 `notElem` cities = error"La primer ciudad ingresada no pertenece a la región"
-                                                    | city2 `notElem` cities = error"La segunda ciudad ingresada no pertenece a la región"
-                                                    | otherwise = Reg cities ((newL city1 city2 calidad):links) tunels
-
-
-tunelR :: Region -> [ City ] -> Region
-tunelR (Reg cities links tunels) citiesN | not(cityCheck (Reg cities links tunels) citiesN) = error"Se ingresaron ciudades que no pertenecen a la región"
-                                         | length citiesN<=1 = error"Las ciudades ingresadas no son suficientes para crear un túnel (se requieren 2 o más)"
-                                         | any(\tunel -> connectsT (head citiesN) (last citiesN) tunel)tunels = error"Un tunel que conecta estas dos ciudades ya pertenece a la región"
-                                         | otherwise = Reg cities links (newT(constructTunel (Reg cities links tunels) citiesN):tunels)
+linkR region@(Reg cities links tunels) city1 city2 calidad | cityCheck region [city1,city2] =  Reg cities ((newL city1 city2 calidad):links) tunels
+                                                           | otherwise = error"Se ingresaron ciudades que no pertenecen a la región"
 
 --Función auxiliar: Verifica que las ciudades ingresadas pertenezcan a la región proporcionada.
 cityCheck :: Region -> [City] -> Bool
 cityCheck (Reg cities _ _) citiesN = all (\ciudad -> ciudad `elem` cities) citiesN
+
+
+tunelR :: Region -> [ City ] -> Region
+tunelR region@(Reg cities links tunels) citiesN | not(cityCheck region citiesN) = error"Se ingresaron ciudades que no pertenecen a la región"
+                                                | length citiesN<=1 = error"Las ciudades ingresadas no son suficientes para crear un túnel (se requieren 2 o más)"
+                                                | any(\tunel -> connectsT (head citiesN) (last citiesN) tunel)tunels = error"Un tunel que conecta estas dos ciudades ya pertenece a la región"
+                                                | otherwise = Reg cities links (newT(constructTunel region citiesN):tunels)
 
 --Función auxiliar: Dada una lista de ciudades, crea una lista que contenga los links que las conectan en el orden proporcionado.
 constructTunel :: Region -> [City] -> [Link]
@@ -54,8 +53,8 @@ linkedR (Reg _ links _) city1 city2 = any (\link -> linksL city2 city1 link) lin
 
 
 delayR :: Region -> City -> City -> Float -- dadas dos ciudades conectadas, indica la demora
-delayR region city1 city2 | not(cityCheck region [city1,city2]) = error"Se ingresaron ciudades que no pertenecen a la región"
-                          | otherwise = delayT(findTunel region city1 city2)
+delayR region city1 city2 | cityCheck region [city1,city2] = delayT(findTunel region city1 city2)
+                          | otherwise = error"Se ingresaron ciudades que no pertenecen a la región"
 
 --Función auxiliar: Búsqueda de un túnel que establezca conexión entre las dos ciudades especificadas, situadas dentro de la región proporcionada.
 findTunel :: Region -> City -> City -> Tunel
@@ -65,7 +64,8 @@ findTunel (Reg cities links (x:xs)) city1 city2 | connectsT city1 city2 x = x
 
 
 availableCapacityForR :: Region -> City -> City -> Int -- indica la capacidad disponible entre dos ciudades
-availableCapacityForR region city1 city2 = capacityL link - usedCapacity region link
+availableCapacityForR region city1 city2 | cityCheck region [city1,city2] = capacityL link - usedCapacity region link
+                                         | otherwise = error"Se ingresaron ciudades que no pertenecen a la región"
    where link= findLink region city1 city2
 
 --Función auxiliar: Calcula la cantidad de túneles a los que pertenece un enlace/link.
