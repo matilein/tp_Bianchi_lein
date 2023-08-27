@@ -109,5 +109,5 @@ regionE9 = availableCapacityForR regionF bsas japon --Calcular la capacidad entr
 regionE10 = availableCapacityForR regionF bsas rosario --Calcular la capacidad de dos ciudades sin enlazar
 
 --Estas excepciones surgen durante la ejecución; se comprueban poniendo el nombre de la variable en la terminal.
-regionE11 = tunelR regionF [bsas, rio, rosario] --Crear un tunel con links sin capacidad. El error se comprueba poniendo regionE7 en la terminal.
-regionE12 = tunelR regionAF [bsas, rosario, santafe] --Crear un tunel con ciudades sin enlazar. El error se comprueba poniendo regionE8 en la terminal.
+regionE11 = tunelR regionF [bsas, rio, rosario] --Crear un tunel con links sin capacidad. El error se comprueba poniendo regionE11 en la terminal.
+regionE12 = tunelR regionAF [bsas, rosario, santafe] --Crear un tunel con ciudades sin enlazar. El error se comprueba poniendo regionE12 en la terminal.
