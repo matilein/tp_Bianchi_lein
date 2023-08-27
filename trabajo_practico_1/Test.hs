@@ -22,19 +22,20 @@ result x | x > 5 = 4
 -- ahora pueden evaluar
 t = [ difP p1 p2 == sqrt 40, 
       nameC bsas == "bsas", 
-      distanceC bsas rosario == sqrt 40,
-      distanceC rio japon == sqrt 17,
+      distanceC bsas rosario == difP p1 p2,
+      distanceC rio japon == difP p3 p6,
       capacityQ calidad == 2,
-      delayQ calidad == 3,
+      delayQ calidad2 == 2,
       connectsL bsas link1,
       connectsL bsas link2 == False,
       linksL santafe pilar link4,
       linksL santafe rio link4 == False,
       capacityL link2==4,
-      delayL link1 == delayQ calidad * sqrt 101,
+      delayL link1 == delayQ calidad * difP p1 p3,
       connectsT bsas pilar tunel1,
       connectsT rio pilar tunel1 == False,
       delayT tunel1 == delayL link1 + delayL link2 + delayL link3 + delayL link4,
+      delayT tunel2 == delayL link1 + delayL link2,
       usesT link1 tunel1,
       usesT link5 tunel1 == False,
       connectedR regionF bsas santafe,
@@ -42,6 +43,7 @@ t = [ difP p1 p2 == sqrt 40,
       linkedR regionF bsas rio,
       linkedR regionF rio santafe == False,
       delayR regionF bsas pilar == delayT tunel1,
+      delayR regionF bsas santafe == delayL link1 + delayL link2 + delayL link3,
       availableCapacityForR regionF bsas rio == 0,
       availableCapacityForR regionF santafe pilar == 1 ]
 
@@ -49,12 +51,14 @@ p1 = newP 1 (-1)
 p2 = newP 3 5
 p3 = newP 2 9
 p4 = newP (-3) 5
+p5 = newP 9 3
+p6 = newP 3 4
 bsas = newC "bsas" p1
 rio = newC "rio" p3
 rosario = newC "rosario" p2
 santafe = newC "santafe" p4
-pilar = newC "pilar" p3
-japon = newC "japon" p2
+pilar = newC "pilar" p5
+japon = newC "japon" p6
 calidad = newQ "calidad" 2 3
 calidad2 = newQ "calidad" 4 2
 calidad3 = newQ "calidad" 3 5
