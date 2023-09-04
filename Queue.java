@@ -3,6 +3,7 @@ package queue;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Queue {
   public List<Object> queue = new ArrayList<>();
   public boolean isEmpty() {
@@ -23,12 +24,16 @@ public class Queue {
 
 	public Object head() {
 		// TODO Auto-generated method stub
-    return null;
+		try {
+			return queue.get(0);
+		    } catch ( IndexOutOfBoundsException e ) {
+		      throw new Error("Queue is empty");
+		    }
 	}
 
 	public int size() {
 		// TODO Auto-generated method stub
-		return 0;
+		return queue.size();
 	}
 
 }
