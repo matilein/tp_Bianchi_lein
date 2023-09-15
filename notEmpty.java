@@ -2,13 +2,13 @@ package queue;
 
 import java.util.LinkedList;
 
-public class emptyQueue extends status {
+public class notEmpty extends status {
 	
     public Object take(LinkedList<Object> elements) {
-    	throw new Error("Queue is empty");
-    }
+    	 return elements.removeFirst();
+	}
     
     public Object head(LinkedList<Object> elements) {
-    	throw new Error("Queue is empty");
-    }
+   	 	 return elements.getFirst();
+	}
 }
