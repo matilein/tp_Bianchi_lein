@@ -25,10 +25,10 @@ public class Queue {
     }
     
     public Object take() {
-    	Object first = (estadoActual).take(queue);
+    	Object takenItem = (estadoActual).take(queue);
     	estados.removeLast();
     	estadoActual = estados.getLast();
-    	return first;
+    	return takenItem;
     }
 
     public Object head() {

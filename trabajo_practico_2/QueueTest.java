@@ -13,60 +13,45 @@ public class QueueTest {
   }
 
   @Test public void test02AddElementsToTheQueue() {
-    assertFalse( qwithSomething().isEmpty() );
+    assertFalse( q_Something().isEmpty() );
   }
 
   @Test public void test03AddedElementsIsAtHead() {
-    assertEquals( "Something", qwithSomething().head() );
+    assertEquals( "Something", q_Something().head() );
   }
   
   @Test public void test04TakeRemovesElementsFromTheQueue() {
-    Queue queue = qwithSomething();
+    Queue queue = q_Something();
     queue.take();
     
     assertTrue( queue.isEmpty() );
   }
 
   @Test public void test05TakeReturnsLastAddedObject() {
-    Queue queue = newQ();
-    String addedObject = "Something";
-    queue.add( addedObject );
-    
-    assertEquals( addedObject, queue.take() );
+    assertEquals( "Something" , q_Something().take() );
   }
 
   @Test public void test06QueueBehavesFIFO() {
-    Queue queue = newQ();
-    String firstAddedObject = "First";
-    String secondAddedObject = "Second";
+    Queue queue = q_First_Second();
 
-    queue.add( firstAddedObject );
-    queue.add( secondAddedObject );
-
-    assertEquals( queue.take(), firstAddedObject );
-    assertEquals( queue.take(), secondAddedObject );
+    assertEquals( queue.take(), "First" );
+    assertEquals( queue.take(), "Second" );
     assertTrue( queue.isEmpty() );
   }
 
   @Test public void test07HeadReturnsFirstAddedObject() {
-    Queue queue = newQ();
-    String firstAddedObject = "First";
-
-    queue.add( firstAddedObject );
-    queue.add( "Second" );
-
-    assertEquals( queue.head(), firstAddedObject );
+    assertEquals( q_First_Second().head(), "First" );
   }
 
   @Test public void test08HeadDoesNotRemoveObjectFromQueue() {
-    Queue queue = qwithSomething();
+    Queue queue = q_Something();
     assertEquals( 1, queue.size() );
     queue.head();
     assertEquals( 1, queue.size() );
   }
 
   @Test public void test09SizeRepresentsObjectInTheQueue() {
-    assertEquals( 2, newQ().add( "First" ).add( "Second" ).size() );
+    assertEquals( 2, q_First_Second().size() );
   }
 
   @Test public void test10CanNotTakeWhenThereAreNoObjectsInTheQueue() {
@@ -75,8 +60,7 @@ public class QueueTest {
   }
 
   @Test public void test09CanNotTakeWhenThereAreNoObjectsInTheQueueAndTheQueueHadObjects() {
-    Queue queue = newQ();
-    queue.add( "Something" );
+    Queue queue = q_Something();
     queue.take();
     catchtakeError(queue);
   }
@@ -91,13 +75,17 @@ public class QueueTest {
     }
   }
   
-  private Queue qwithSomething() {
+  private Queue newQ() {
+		return new Queue();
+	}
+  
+  private Queue q_Something() {
 		Queue queue = newQ().add( "Something" );
 		return queue;
 	}
   
-  private Queue newQ() {
-		return new Queue();
+  private Queue q_First_Second() {
+		return newQ().add( "First" ).add( "Second" );
 	}
   
   private void catchtakeError(Queue queue) {
