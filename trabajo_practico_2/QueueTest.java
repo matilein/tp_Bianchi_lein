@@ -66,9 +66,8 @@ public class QueueTest {
   }
 
   @Test public void test10CanNotHeadWhenThereAreNoObjectsInTheQueue() {
-    Queue queue = newQ();
     try {
-      queue.head();
+      newQ().head();
       fail( "Expected Error was not thrown." );
     } catch (Error e) {
       assertTrue( e.getMessage().equals( "Queue is empty" ) );
